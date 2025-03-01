@@ -1,0 +1,68 @@
+version: "3"
+
+services:
+  # Redis cluster nodes - 2 masters and 2 slaves
+  redis1:
+    image: redis:7.0
+    container_name: redis1
+    command: redis-server /usr/local/etc/redis/redis.conf
+    volumes:
+      - ./redis/redis1.conf:/usr/local/etc/redis/redis.conf
+    ports:
+      - "6379:6379"
+    networks:
+      - redis-net
+
+  redis2:
+    image: redis:7.0
+    container_name: redis2
+    command: redis-server /usr/local/etc/redis/redis.conf
+    volumes:
+      - ./redis/redis2.conf:/usr/local/etc/redis/redis.conf
+    ports:
+      - "6380:6379"
+    networks:
+      - redis-net
+
+  redis3:
+    image: redis:7.0
+    container_name: redis3
+    command: redis-server /usr/local/etc/redis/redis.conf
+    volumes:
+      - ./redis/redis3.conf:/usr/local/etc/redis/redis.conf
+    ports:
+      - "6381:6379"
+    networks:
+      - redis-net
+
+  redis4:
+    image: redis:7.0
+    container_name: redis4
+    command: redis-server /usr/local/etc/redis/redis.conf
+    volumes:
+      - ./redis/redis4.conf:/usr/local/etc/redis/redis.conf
+    ports:
+      - "6382:6379"
+    networks:
+      - redis-net
+
+  # Predixy proxy
+  predixy:
+    # image: ledisdb/predixy:1.0.5
+    image: vietduy0509/predixy
+    container_name: predixy
+    volumes:
+      - ./p_conf:/etc/predixy
+    ports:
+      - "7617:7617"
+    networks:
+      - redis-net
+    depends_on:
+      - redis1
+      - redis2
+      - redis3
+      - redis4
+
+networks:
+  redis-net:
+    driver: bridge
